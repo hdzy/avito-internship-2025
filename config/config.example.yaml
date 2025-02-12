@@ -1,0 +1,14 @@
+# development, test, [production] }
+env: development
+# debug,             [info, warn] } [x, y, z] - используются в продакшене
+log_level: debug
+# console,           [json]       }
+log_format: console
+
+server_port: 8080
+database_host: db
+database_port: 5432
+database_user: postgres
+database_password: password
+database_name: shop
+jwt_secret: "avito-internship-please-no-reject"
