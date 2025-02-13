@@ -19,7 +19,6 @@ func RunMigrations(databaseURL, migrationsPath string) {
 		log.Fatalf("Ошибка инициализации миграций: %v", err)
 	}
 
-	// Применяем миграции (только вверх)
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		log.Fatalf("Ошибка применения миграций: %v", err)
 	}
