@@ -2,14 +2,18 @@ package main
 
 import (
 	"avito-internship-2025/internal/config"
+	"avito-internship-2025/internal/handlers"
 	"avito-internship-2025/internal/logger"
 	"avito-internship-2025/internal/migrations"
+	"avito-internship-2025/internal/repository"
+	"avito-internship-2025/internal/service"
 	"flag"
 	"fmt"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 )
 
@@ -38,6 +42,7 @@ func main() {
 	)
 
 	if *migrateFlag {
+		logg.Info("Запуск миграций", slog.String("migrationsPath", "./migrations"))
 		migrationsPath := "./migrations"
 		migrations.RunMigrations(databaseURL, migrationsPath)
 		os.Exit(0)
@@ -54,6 +59,17 @@ func main() {
 		logg.Error("Ошибка подключения к БД (ping)", slog.Any("error", err))
 		os.Exit(1)
 	}
+	logg.Info("Подключение к БД установлено")
 
-	logg.Info("Запуск сервера")
+	employeesRepo := repository.NewEmployeeRepository(db, logg)
+	authService := service.NewAuthService(employeesRepo, cfg.JWTSecret, logg)
+	authHandler := handlers.NewAuthHandler(authService, logg)
+
+	http.HandleFunc("/api/auth", authHandler.Authenticate)
+
+	logg.Info("Запуск сервера на порту", slog.Int("port", cfg.ServerPort))
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.ServerPort), nil); err != nil {
+		logg.Error("Ошибка запуска сервера", slog.Any("error", err))
+		os.Exit(1)
+	}
 }
