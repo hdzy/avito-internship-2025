@@ -6,6 +6,8 @@ import (
 	"avito-internship-2025/internal/migrations"
 	"flag"
 	"fmt"
+	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/jmoiron/sqlx"
 	"log"
 	"log/slog"
 	"os"
@@ -41,7 +43,17 @@ func main() {
 		os.Exit(0)
 	}
 
-	logg.Info("Запуск сервера")
+	db, err := sqlx.Open("postgres", databaseURL)
+	if err != nil {
+		logg.Error("Ошибка подключения к БД", slog.Any("error", err))
+		os.Exit(1)
+	}
+	defer db.Close()
 
-	// TODO: app init next steps
+	if err := db.Ping(); err != nil {
+		logg.Error("Ошибка подключения к БД (ping)", slog.Any("error", err))
+		os.Exit(1)
+	}
+
+	logg.Info("Запуск сервера")
 }
