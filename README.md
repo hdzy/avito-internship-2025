@@ -72,5 +72,5 @@
 Пакеты, которые также использовались в проекте, но не упоминались выше:
 
 - [github.com/jackc/pgx/v4/stdlib](https://github.com/jackc/pgx) - драйвер для работы с PostgreSQL
-- ["github.com/jmoiron/sqlx"](https://github.com/jmoiron/sqlx) - расширение пакета database/sql
-- ["github.com/golang-jwt/jwt/v4"](https://github.com/golang-jwt/jwt/v4) - пакет для работы с JWT-токенами
+- [github.com/jmoiron/sqlx](https://github.com/jmoiron/sqlx) - расширение пакета database/sql
+- [github.com/golang-jwt/jwt/v4](https://github.com/golang-jwt/jwt/v4) - пакет для работы с JWT-токенами
