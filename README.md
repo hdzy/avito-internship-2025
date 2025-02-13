@@ -48,14 +48,14 @@
 Миграционные файлы хранятся в каталоге migrations и имеют формат:
 
 - Таблица employees *содержит информацию о сотрудниках*:
-  - <version>_create_employees_table.up.sql
-  - <version>_create_employees_table.down.sql 
+  - <version\>_create_employees_table.up.sql
+  - <version\>_create_employees_table.down.sql 
 - Таблица transactions *содержит историю операций*:
-  - <version>_create_transactions_table.up.sql
-  - <version>_create_transactions_table.down.sql 
+  - <version\>_create_transactions_table.up.sql
+  - <version\>_create_transactions_table.down.sql 
 - Таблица transactions *содержит информацию о мерче*:
-  - <version>_create_merch_items_table.up.sql
-  - <version>_create_merch_items_table.down.sql
+  - <version\>_create_merch_items_table.up.sql
+  - <version\>_create_merch_items_table.down.sql
 
 
 ## Логирование 
