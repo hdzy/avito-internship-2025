@@ -36,7 +36,7 @@ func main() {
 	)
 
 	if *migrateFlag {
-		migrationsPath := "/migrations"
+		migrationsPath := "./migrations"
 		migrations.RunMigrations(databaseURL, migrationsPath)
 		os.Exit(0)
 	}

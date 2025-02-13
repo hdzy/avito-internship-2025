@@ -16,4 +16,5 @@ INSERT INTO merch_items (name, price) VALUES
     ('umbrella', 200),
     ('socks', 10),
     ('wallet', 50),
-    ('pink-hoody', 500);
+    ('pink-hoody', 500)
+ON CONFLICT (name) DO NOTHING;
