@@ -47,3 +47,13 @@ func (r *EmployeeRepository) CreateEmployee(username string, passwordHash string
 	r.Logger.Info("Сотрудник создан", slog.String("username", username), slog.Int("id", id))
 	return r.GetEmployeeByUsername(username)
 }
+
+// UpdateEmployeeBalance обновляет баланс сотрудника
+func (r *EmployeeRepository) UpdateEmployeeBalance(tx *sqlx.Tx, employeeID, newBalance int) error {
+	query := "UPDATE employees SET coins = $1 WHERE id = $2"
+	_, err := tx.Exec(query, newBalance, employeeID)
+	if err != nil {
+		r.Logger.Error("Ошибка обновления баланса", slog.Any("error", err))
+	}
+	return err
+}
