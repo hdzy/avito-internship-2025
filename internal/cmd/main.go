@@ -71,6 +71,8 @@ func main() {
 	authHandler := handlers.NewAuthHandler(authService, logg)
 	http.HandleFunc("/api/auth", authHandler.Authenticate)
 
+	// Graceful-shutdown pattern
+
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.ServerPort),
 		Handler: nil, // используем стандартный mux
@@ -95,4 +97,5 @@ func main() {
 		os.Exit(1)
 	}
 	logg.Info("Сервер успешно завершил работу")
+
 }
