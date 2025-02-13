@@ -7,6 +7,8 @@ import (
 	"avito-internship-2025/internal/migrations"
 	"avito-internship-2025/internal/repository"
 	"avito-internship-2025/internal/service"
+	"context"
+	"errors"
 	"flag"
 	"fmt"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -15,6 +17,9 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -64,12 +69,30 @@ func main() {
 	employeesRepo := repository.NewEmployeeRepository(db, logg)
 	authService := service.NewAuthService(employeesRepo, cfg.JWTSecret, logg)
 	authHandler := handlers.NewAuthHandler(authService, logg)
-
 	http.HandleFunc("/api/auth", authHandler.Authenticate)
 
-	logg.Info("Запуск сервера на порту", slog.Int("port", cfg.ServerPort))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.ServerPort), nil); err != nil {
-		logg.Error("Ошибка запуска сервера", slog.Any("error", err))
+	server := &http.Server{
+		Addr:    fmt.Sprintf(":%d", cfg.ServerPort),
+		Handler: nil, // используем стандартный mux
+	}
+
+	go func() {
+		logg.Info("Запуск сервера", slog.Int("port", cfg.ServerPort))
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logg.Error("Ошибка запуска сервера", slog.Any("error", err))
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-quit
+	logg.Info("Получен сигнал завершения", slog.String("signal", sig.String()))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		logg.Error("Ошибка при завершении работы сервера", slog.Any("error", err))
 		os.Exit(1)
 	}
+	logg.Info("Сервер успешно завершил работу")
 }
