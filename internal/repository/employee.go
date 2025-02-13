@@ -6,23 +6,27 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/jmoiron/sqlx"
+	"log/slog"
 )
 
 type EmployeeRepository struct {
-	DB *sqlx.DB
+	DB     *sqlx.DB
+	Logger *slog.Logger
 }
 
-func NewEmployeeRepository(db *sqlx.DB) *EmployeeRepository {
-	return &EmployeeRepository{DB: db}
+func NewEmployeeRepository(db *sqlx.DB, logger *slog.Logger) *EmployeeRepository {
+	return &EmployeeRepository{
+		DB:     db,
+		Logger: logger,
+	}
 }
 
 // GetEmployeeByUsername ищет сотрудника по username
 func (r *EmployeeRepository) GetEmployeeByUsername(username string) (*entity.Employee, error) {
 	employee := &entity.Employee{}
-	query := "SELECT id, username, coins, created_at FROM employees WHERE username = $1"
+	query := "SELECT id, username, password_hash, coins, created_at FROM employees WHERE username = $1"
 	err := r.DB.Get(employee, query, username)
 	if err != nil {
-		// Пользователя с таким username нет в базе данных
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -33,12 +37,13 @@ func (r *EmployeeRepository) GetEmployeeByUsername(username string) (*entity.Emp
 }
 
 // CreateEmployee создаёт нового сотрудника
-func (r *EmployeeRepository) CreateEmployee(username string) (*entity.Employee, error) {
+func (r *EmployeeRepository) CreateEmployee(username string, passwordHash string) (*entity.Employee, error) {
 	var id int
-	query := "INSERT INTO employees (username, coins) VALUES ($1, 1000) RETURNING id"
-	err := r.DB.Get(&id, query, username)
+	query := "INSERT INTO employees (username, password_hash) VALUES ($1, $2) RETURNING id"
+	err := r.DB.Get(&id, query, username, passwordHash)
 	if err != nil {
 		return nil, err
 	}
+	r.Logger.Info("Сотрудник создан", slog.String("username", username), slog.Int("id", id))
 	return r.GetEmployeeByUsername(username)
 }
