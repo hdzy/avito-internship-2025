@@ -9,7 +9,6 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"path"
 )
 
 func main() {
@@ -37,7 +36,7 @@ func main() {
 	)
 
 	if *migrateFlag {
-		migrationsPath := path.Join(os.Getenv("GOPATH"), "/migrations")
+		migrationsPath := "./migrations"
 		migrations.RunMigrations(databaseURL, migrationsPath)
 		os.Exit(0)
 	}
