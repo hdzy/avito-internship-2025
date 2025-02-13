@@ -71,4 +71,5 @@
 
 Пакеты, которые также использовались в проекте, но не упоминались выше:
 
-- [github.com/lib/pq](https://github.com/lib/pq) - драйвер для работы с PostgreSQL
+- [github.com/jackc/pgx/v4/stdlib](https://github.com/jackc/pgx) - драйвер для работы с PostgreSQL
+- ["github.com/jmoiron/sqlx"](https://github.com/jmoiron/sqlx) - расширение пакета database/sql
