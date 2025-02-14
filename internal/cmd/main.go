@@ -69,16 +69,20 @@ func main() {
 
 	employeesRepo := repository.NewEmployeeRepository(db, logg)
 	txRepo := repository.NewTransactionRepository(db, logg)
+	merchRepo := repository.NewMerchRepository(db, logg)
 
 	authService := service.NewAuthService(employeesRepo, cfg.JWTSecret, logg)
-	coinService := service.NewCoinService(db, employeesRepo, txRepo, logg)
+	coinService := service.NewCoinService(employeesRepo, txRepo, merchRepo, logg)
+	infoService := service.NewInfoService(employeesRepo, txRepo, merchRepo, logg)
 
+	infoHandler := handlers.NewInfoHandler(infoService, logg)
 	authHandler := handlers.NewAuthHandler(authService, logg)
 	transferHandler := handlers.NewTransferHandler(coinService, logg)
 	buyHandler := handlers.NewBuyHandler(coinService, logg)
 
 	http.Handle("/api/sendCoin", middleware.AuthMiddleware([]byte(cfg.JWTSecret), http.HandlerFunc(transferHandler.SendCoin)))
 	http.Handle("/api/buy/", middleware.AuthMiddleware([]byte(cfg.JWTSecret), http.HandlerFunc(buyHandler.BuyMerch)))
+	http.Handle("/api/info", middleware.AuthMiddleware([]byte(cfg.JWTSecret), http.HandlerFunc(infoHandler.GetInfo)))
 
 	http.HandleFunc("/api/auth", authHandler.Authenticate)
 
@@ -109,3 +113,5 @@ func main() {
 	}
 	logg.Info("Сервер успешно завершил работу")
 }
+
+// TODO: normal comments in all project
