@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"avito-internship-2025/internal/service"
@@ -36,7 +37,7 @@ func (h *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	res, err := h.AuthService.Authenticate(req)
 	if err != nil {
-		if err == service.ErrInvalidCredentials {
+		if errors.Is(err, service.ErrInvalidCredentials) {
 			h.Logger.Warn("Неверные учетные данные", slog.String("username", req.Username))
 			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(ErrorResponse{Errors: "Неверный пароль"})
