@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"avito-internship-2025/internal/middleware"
@@ -45,10 +46,17 @@ func (h *TransferHandler) SendCoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if username == req.ToUser {
+		h.Logger.Error("Ошибка при переводе монет", slog.Any("error", "Ошибка: Попытка перевода на собственный аккаунт"))
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Errors: "Ошибка: Попытка перевода на собственный аккаунт"})
+		return
+	}
+
 	if err := h.CoinService.TransferCoins(username, req.ToUser, req.Amount); err != nil {
 		h.Logger.Error("Ошибка при переводе монет", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Errors: "Ошибка перевода монет"})
+		json.NewEncoder(w).Encode(ErrorResponse{Errors: fmt.Sprintf("Ошибка перевода монет %s", err)})
 		return
 	}
 
