@@ -3,8 +3,8 @@ package migrations
 import (
 	"errors"
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres" // импорт драйвера для PostgreSQL
-	_ "github.com/golang-migrate/migrate/v4/source/file"       // импорт источника файлов миграций
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"log"
 )
 
