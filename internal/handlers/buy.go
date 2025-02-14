@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"avito-internship-2025/internal/middleware"
@@ -44,7 +45,7 @@ func (h *BuyHandler) BuyMerch(w http.ResponseWriter, r *http.Request) {
 	if err := h.CoinService.BuyMerch(username, item); err != nil {
 		h.Logger.Error("Ошибка при покупке мерча", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Errors: "Ошибка покупки мерча"})
+		json.NewEncoder(w).Encode(ErrorResponse{Errors: fmt.Sprintf("Ошибка покупки мерча %s", err)})
 		return
 	}
 
