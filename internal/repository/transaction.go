@@ -28,3 +28,14 @@ func (r *TransactionRepository) CreateTransaction(tx *sqlx.Tx, t *entity.Transac
 	}
 	return err
 }
+
+func (r *TransactionRepository) GetTransactionsByEmployee(employeeID int) ([]entity.Transaction, error) {
+	var transactions []entity.Transaction
+	query := "SELECT id, employee_id, type, amount, merch_id, counterparty, created_at FROM transactions WHERE employee_id = $1"
+	err := r.DB.Select(&transactions, query, employeeID)
+	if err != nil {
+		r.Logger.Error("Ошибка получения транзакций", slog.Any("error", err))
+		return nil, err
+	}
+	return transactions, nil
+}
