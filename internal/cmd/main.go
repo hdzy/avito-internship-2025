@@ -4,6 +4,7 @@ import (
 	"avito-internship-2025/internal/config"
 	"avito-internship-2025/internal/handlers"
 	"avito-internship-2025/internal/logger"
+	"avito-internship-2025/internal/middleware"
 	"avito-internship-2025/internal/migrations"
 	"avito-internship-2025/internal/repository"
 	"avito-internship-2025/internal/service"
@@ -67,8 +68,18 @@ func main() {
 	logg.Info("Подключение к БД установлено")
 
 	employeesRepo := repository.NewEmployeeRepository(db, logg)
+	txRepo := repository.NewTransactionRepository(db, logg)
+
 	authService := service.NewAuthService(employeesRepo, cfg.JWTSecret, logg)
+	coinService := service.NewCoinService(db, employeesRepo, txRepo, logg)
+
 	authHandler := handlers.NewAuthHandler(authService, logg)
+	transferHandler := handlers.NewTransferHandler(coinService, logg)
+	buyHandler := handlers.NewBuyHandler(coinService, logg)
+
+	http.Handle("/api/sendCoin", middleware.AuthMiddleware([]byte(cfg.JWTSecret), http.HandlerFunc(transferHandler.SendCoin)))
+	http.Handle("/api/buy/", middleware.AuthMiddleware([]byte(cfg.JWTSecret), http.HandlerFunc(buyHandler.BuyMerch)))
+
 	http.HandleFunc("/api/auth", authHandler.Authenticate)
 
 	// Graceful-shutdown pattern
@@ -97,5 +108,4 @@ func main() {
 		os.Exit(1)
 	}
 	logg.Info("Сервер успешно завершил работу")
-
 }
