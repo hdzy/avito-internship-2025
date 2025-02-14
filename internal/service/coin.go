@@ -6,33 +6,33 @@ import (
 
 	"avito-internship-2025/internal/entity"
 	"avito-internship-2025/internal/repository"
-	"github.com/jmoiron/sqlx"
 	"log/slog"
 )
 
 type CoinService struct {
-	DB              *sqlx.DB
 	EmployeeRepo    *repository.EmployeeRepository
 	TransactionRepo *repository.TransactionRepository
+	MerchRepo       *repository.MerchRepository
 	Logger          *slog.Logger
 }
 
-func NewCoinService(db *sqlx.DB, empRepo *repository.EmployeeRepository, txRepo *repository.TransactionRepository, logger *slog.Logger) *CoinService {
+func NewCoinService(empRepo *repository.EmployeeRepository, txRepo *repository.TransactionRepository, merchRepo *repository.MerchRepository, logger *slog.Logger) *CoinService {
 	return &CoinService{
-		DB:              db,
 		EmployeeRepo:    empRepo,
 		TransactionRepo: txRepo,
+		MerchRepo:       merchRepo,
 		Logger:          logger,
 	}
 }
 
-// TransferCoins переводит coins от fromUser к toUser.
+// TransferCoins переводит монеты от fromUser к toUser.
 func (s *CoinService) TransferCoins(fromUsername, toUsername string, amount int) error {
 	if amount <= 0 {
 		return errors.New("сумма перевода должна быть положительной")
 	}
 
-	tx, err := s.DB.Beginx()
+	// Начало транзакции: используем DB из репозитория, так как EmployeeRepo уже содержит ссылку на базу.
+	tx, err := s.EmployeeRepo.DB.Beginx()
 	if err != nil {
 		return err
 	}
@@ -92,12 +92,15 @@ func (s *CoinService) TransferCoins(fromUsername, toUsername string, amount int)
 	return nil
 }
 
-// BuyMerch функция покупки мерча по его названию
+// BuyMerch позволяет сотруднику купить мерчовый товар по его названию.
 func (s *CoinService) BuyMerch(username, itemName string) error {
-	var merch entity.MerchItem
-	query := "SELECT id, name, price, created_at FROM merch_items WHERE name = $1"
-	if err := s.DB.Get(&merch, query, itemName); err != nil {
+	// Получаем информацию о мерче через репозиторий.
+	merch, err := s.MerchRepo.GetMerchByName(itemName)
+	if err != nil {
 		return err
+	}
+	if merch == nil {
+		return fmt.Errorf("товар %s не найден", itemName)
 	}
 
 	emp, err := s.EmployeeRepo.GetEmployeeByUsername(username)
@@ -111,7 +114,7 @@ func (s *CoinService) BuyMerch(username, itemName string) error {
 		return fmt.Errorf("недостаточно монет для покупки %s: требуется %d, доступно %d", merch.Name, merch.Price, emp.Coins)
 	}
 
-	tx, err := s.DB.Beginx()
+	tx, err := s.EmployeeRepo.DB.Beginx()
 	if err != nil {
 		return err
 	}
