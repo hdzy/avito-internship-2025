@@ -30,7 +30,7 @@ func (r *MerchRepository) GetMerchByID(id int) (*entity.MerchItem, error) {
 	return &merch, nil
 }
 
-// GetMerchByID возвращает мерч по его Name
+// GetMerchByName возвращает мерч по его Name.
 func (r *MerchRepository) GetMerchByName(name string) (*entity.MerchItem, error) {
 	var merch entity.MerchItem
 	query := "SELECT id, name, price, created_at FROM merch_items WHERE name = $1"
