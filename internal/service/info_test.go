@@ -41,7 +41,6 @@ func TestInfoService_GetInfo(t *testing.T) {
 				AddRow(2, employeeID, "purchase", 200, 10, nil, time.Now()),
 			)
 
-		// 3) При type == "purchase", мы смотрим MerchRepo.GetMerchByID(10)
 		mock.ExpectQuery(`SELECT id, name, price, created_at FROM merch_items WHERE id = \$1`).
 			WithArgs(10).
 			WillReturnRows(sqlmock.NewRows([]string{"id", "name", "price", "created_at"}).
