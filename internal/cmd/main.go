@@ -113,5 +113,3 @@ func main() {
 	}
 	logg.Info("Сервер успешно завершил работу")
 }
-
-// TODO: normal comments in all project
