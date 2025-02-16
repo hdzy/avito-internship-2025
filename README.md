@@ -74,7 +74,66 @@
 
 ### Нагрузочные тесты:
 
+Результат нагрузочного тестирования через Apache Bench эндпоинта /api/info: 
 
+`
+ab -n 10000 -c 1000 http://localhost:8080/api/info
+This is ApacheBench, Version 2.3 <$Revision: 1923142 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+
+
+Server Software:        
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /api/info
+Document Length:        28 bytes
+
+Concurrency Level:      1000
+Time taken for tests:   0.528 seconds
+Complete requests:      10000
+Failed requests:        0
+Non-2xx responses:      10000
+Total transferred:      1880000 bytes
+HTML transferred:       280000 bytes
+Requests per second:    18944.88 [#/sec] (mean)
+Time per request:       52.785 [ms] (mean)
+Time per request:       0.053 [ms] (mean, across all concurrent requests)
+Transfer rate:          3478.16 [Kbytes/sec] received
+
+Connection Times (ms)
+min  mean[+/-sd] median   max
+Connect:        0    6   4.1      6      17
+Processing:     6   45  38.6     31     183
+Waiting:        0   42  38.7     29     179
+Total:         15   50  39.9     36     193
+
+Percentage of the requests served within a certain time (ms)
+50%     36
+66%     40
+75%     45
+80%     51
+90%     99
+95%    174
+98%    181
+99%    184
+100%    193 (longest request)
+
+`
 
 ## Проблемы с которыми я столкнулся при разработке проекта
 
@@ -92,4 +151,4 @@
 - [github.com/golang-jwt/jwt/v4](https://github.com/golang-jwt/jwt/v4) - пакет для работы с JWT-токенами
 - [github.com/stretchr/testify](https://github.com/stretchr/testify) - пакет для тестирования
 - [github.com/stretchr/testify/mock](https://github.com/stretchr/testify/mock) - пакет для моков
-- [github.com/DATA-DOG/go-sqlmock]("https://github.com/DATA-DOG/go-sqlmock") - пакет для моков
+- [github.com/DATA-DOG/go-sqlmock](https://github.com/DATA-DOG/go-sqlmock) - пакет для моков
