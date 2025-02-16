@@ -76,7 +76,7 @@
 
 Результат нагрузочного тестирования через Apache Bench эндпоинта /api/info: 
 
-`
+```
 ab -n 10000 -c 1000 http://localhost:8080/api/info
 This is ApacheBench, Version 2.3 <$Revision: 1923142 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
@@ -132,8 +132,7 @@ Percentage of the requests served within a certain time (ms)
 98%    181
 99%    184
 100%    193 (longest request)
-
-`
+```
 
 ## Проблемы с которыми я столкнулся при разработке проекта
 
