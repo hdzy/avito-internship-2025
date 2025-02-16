@@ -6,8 +6,6 @@
 
 ## Запуск проекта
 
-Все команды также описаны в `/scripts/makefile.mk`
-
 Запуск приложения: 
 
 ```docker-compose up --build```
