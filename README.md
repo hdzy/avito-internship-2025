@@ -6,13 +6,15 @@
 
 ## Запуск проекта
 
+Все команды также описаны в `/scripts/makefile.mk`
+
 Запуск приложения: 
 
-`docker-compose up --build`
+```docker-compose up --build```
 
 Запуск миграций (необходимо при изменении файлов миграции): 
 
-`docker-compose run avito-shop-service /build -migrate`
+```docker-compose run avito-shop-service /build -migrate```
 
 ## Структура проекта
 
@@ -66,11 +68,11 @@
 
 ### Юнит-тесты:
 - Покрытие: 71.9%
-- Запуск: `go test -v ./...` (добавить флаг -cover для подсчета покрытия)
+- Запуск: ```go test -v ./...``` (добавить флаг -cover для подсчета покрытия)
 
 ### Интеграционные тесты:
 
-Запуск: `go test -v -tags=integration ./integration`
+Запуск: ```go test -v -tags=integration ./integration```
 
 ### Нагрузочные тесты:
 
